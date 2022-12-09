@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6c36c83b836f78b41ab40d39f5c57479, type: 3}
+  m_Name: cc_female_2
+  m_EditorClassIdentifier: 
+  combinedMeshes:
+  - {fileID: 4300000, guid: 507ddb0775add6f49b5d8812d95fe38a, type: 2}
+  materials:
+  - {fileID: 2100000, guid: 3f3d17836a87ae942ac524d7020ac829, type: 2}
+  - {fileID: 2100000, guid: 791fb6b05f8b98b4397ebdb66cf607d4, type: 2}
+  bodyMat: {fileID: 2100000, guid: 791fb6b05f8b98b4397ebdb66cf607d4, type: 2}
+  characterCustomizationSetup:
+    Hair: 2
+    Hat: -1
+    TShirt: 1
+    Pants: 1
+    Shoes: 1
+    Beard: -1
+    Accessory: -1
+    Fat: 0
+    Muscles: 0
+    Slimness: 0
+    Thin: 0
+    BreastSize: 0
+    Neck_Width: 0
+    Ear_Size: 0
+    Ear_Angle: 0
+    Jaw_Width: 0
+    Jaw_Shift: 0
+    Jaw_Offset: 0
+    Cheek_Size: -24
+    Chin_Offset: 0
+    Eye_Width: 0
+    Eye_Form: 100
+    Eye_InnerCorner: 0
+    Eye_Corner: 0
+    Eye_Rotation: 0
+    Eye_Offset: 0
+    Eye_ScaleX: 0
+    Eye_ScaleY: 0
+    Eye_Size: 0
+    Eye_Close: 0
+    Eye_Height: 20
+    Brow_Height: 0
+    Brow_Shape: 65
+    Brow_Thickness: 0
+    Brow_Length: 0
+    Nose_Length: 0
+    Nose_Size: 0
+    Nose_Angle: 0
+    Nose_Offset: 0
+    Nose_Bridge: 0
+    Nose_Hump: 0
+    Mouth_Offset: 0
+    Mouth_Width: 0
+    Mouth_Size: 11
+    Mouth_Open: 0
+    Mouth_Bulging: 0
+    LipsCorners_Offset: 0
+    Face_Form: 0
+    Chin_Width: 0
+    Chin_Form: 0
+    Head_Offset: 0
+    Height: 0.0072
+    Smile: 0
+    Sadness: 0
+    Surprise: 0
+    Thoughtful: 0
+    Angry: 0
+    HeadSize: 0
+    SkinColor: {r: 0.8679245, g: 0.5573327, b: 0.45443216, a: 1}
+    EyeColor: {r: 0.16470589, g: 0.34901962, b: 0.21011515, a: 1}
+    HairColor: {r: 0.8490566, g: 0.28006425, b: 0.06007475, a: 1}
+    UnderpantsColor: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 1}
+  animator: {fileID: 9100000, guid: 084d8be3777e8b94c81323dd5fc42d88, type: 2}
+  avatar: {fileID: 9000000, guid: 9c09c78ed1209974db369788b8305a24, type: 3}
+  hipsScale: {x: 1.0048, y: 1.0072, z: 1.0072}
+  headScale: {x: 1, y: 1, z: 1}
+  empty_rig: {fileID: 100008, guid: 326a3af6fb0db104885c2de683130fec, type: 3}
+  prefab: {fileID: 1680885626017778737, guid: c72955c1439c4434689a63ecc22658bd, type: 3}
