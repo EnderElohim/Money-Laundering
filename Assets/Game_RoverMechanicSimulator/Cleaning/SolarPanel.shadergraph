@@ -742,7 +742,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"7ccde704717a31044937169594175ed5\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"27bc1542108d841dca82d62ae078bf72\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
@@ -1411,7 +1411,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"33a0aa6131d9d7d408d9b91e6887b322\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"d6f2cb48e10724bfea4116c456799a2c\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
@@ -2112,7 +2112,7 @@
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
     "m_Value": {
-        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"3fe160a9ff4481e4e8c9b9ee33f25d96\",\"type\":3}}",
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":2800000,\"guid\":\"78f7436ea745448f48e4ef7cd0aa0f65\",\"type\":3}}",
         "m_Guid": ""
     },
     "isMainTexture": false,
