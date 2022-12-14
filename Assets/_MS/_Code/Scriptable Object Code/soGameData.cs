@@ -7,4 +7,6 @@ public class soGameData : ScriptableObject
 {
     public float cameraToCustomerDuration;
     public float cameraToWorkDuration;
+    public float cameraWorkFov;
+    public float cameraCustomerFov;
 }

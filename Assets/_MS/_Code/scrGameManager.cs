@@ -44,6 +44,7 @@ public class scrGameManager : MonoBehaviour
     public void MoveCameraToCustomer()
     {
         Camera.main.transform.DOMove(cameraCustomerPosition.position, scrGameData.values.cameraToCustomerDuration);
+        Camera.main.DOFieldOfView(scrGameData.values.cameraCustomerFov, scrGameData.values.cameraToCustomerDuration);
         Camera.main.transform.DORotate(cameraCustomerPosition.rotation.eulerAngles, scrGameData.values.cameraToCustomerDuration);
     }
     [ContextMenu("MoveCameraToWork")]
@@ -51,6 +52,9 @@ public class scrGameManager : MonoBehaviour
     {
         Camera.main.transform.DOMove(cameraWorkPosition.position, scrGameData.values.cameraToCustomerDuration);
         Camera.main.transform.DORotate(cameraWorkPosition.rotation.eulerAngles, scrGameData.values.cameraToCustomerDuration);
+        Camera.main.DOFieldOfView(scrGameData.values.cameraWorkFov, scrGameData.values.cameraToCustomerDuration);
+       
+
     }
 
     private string GetColouredString(string _val, Color _color)
