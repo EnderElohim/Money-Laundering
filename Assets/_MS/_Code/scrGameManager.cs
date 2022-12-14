@@ -18,27 +18,39 @@ public class scrGameManager : MonoBehaviour
 
     [Header("Assignment")]
     public EventStruct[] EventList;
-
-
-    [Header("UI")]
-    public Slider[] sliders;
-
+    public Transform cameraWorkPosition;
 
 
     //Private
     private TriggerCondition currentCondition = TriggerCondition.onEnd;
     private float currentGameTime = 0;
-    private scrColourObject colourObject;
+    private Transform cameraCustomerPosition;
+
 
     private void Start()
     {
-        colourObject = (scrColourObject)Resources.Load("Console Colour");
+        cameraCustomerPosition = new GameObject().transform;
+        cameraCustomerPosition.position = Camera.main.transform.position;
+        cameraCustomerPosition.rotation = Camera.main.transform.rotation;
+
     }
 
     private void Update()
     {
-
         currentGameTime += Time.deltaTime;
+    }
+
+    [ContextMenu("MoveCameraToCustomer")]
+    public void MoveCameraToCustomer()
+    {
+        Camera.main.transform.DOMove(cameraCustomerPosition.position, scrGameData.values.cameraToCustomerDuration);
+        Camera.main.transform.DORotate(cameraCustomerPosition.rotation.eulerAngles, scrGameData.values.cameraToCustomerDuration);
+    }
+    [ContextMenu("MoveCameraToWork")]
+    public void MoveCameraToWork()
+    {
+        Camera.main.transform.DOMove(cameraWorkPosition.position, scrGameData.values.cameraToCustomerDuration);
+        Camera.main.transform.DORotate(cameraWorkPosition.rotation.eulerAngles, scrGameData.values.cameraToCustomerDuration);
     }
 
     private string GetColouredString(string _val, Color _color)
@@ -46,26 +58,11 @@ public class scrGameManager : MonoBehaviour
         return string.Format("<color=#{0:X2}{1:X2}{2:X2}>{3}</color>", (byte)(_color.r * 255f), (byte)(_color.g * 255f), (byte)(_color.b * 255f), _val);
     }
 
-    public void ButtonEvent()
-    {
-
-    }
-
-    public void SetSliderValue(int _val)
-    {
-        foreach (Slider item in sliders)
-        {
-            item.value = _val;
-        }
-    }
 
     public void Win()
     {
         currentCondition = TriggerCondition.onWin;
         TriggerEvents();
-
-        if (scrPlayer.manager)
-            scrPlayer.manager.Win();
 
     }
 
@@ -73,10 +70,6 @@ public class scrGameManager : MonoBehaviour
     {
         currentCondition = TriggerCondition.onLose;
         TriggerEvents();
-
-        if (scrPlayer.manager)
-            scrPlayer.manager.Lose();
-
     }
 
     public void Restart()

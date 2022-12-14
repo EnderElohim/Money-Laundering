@@ -64,7 +64,6 @@ public class scrSlider : MonoBehaviour
         {
             Destroy(gameObject);
         }
-      
     }
 
     public void Setup(float _targetValue, float _speed, bool _destroyOnFinish)
