@@ -63,7 +63,10 @@ public class scrGameManager : MonoBehaviour
     private void Update()
     {
         ClickControlOnObjects();
-
+        if(currentGameState == GameStateEnum.WaitingForConfirm && currentCoin != null) 
+        {
+            currentCoin.transform.RotateAround(Vector3.up, Time.deltaTime);
+        }
     }
 
     public void MoveBrush(Vector3 _pos)
@@ -81,6 +84,7 @@ public class scrGameManager : MonoBehaviour
     
     public void AccepOffer()
     {
+        scrCanvasManager.manager.DisplayWorkshopText("Click on Magnifying Glass");
         scrCanvasManager.manager.customerTextDisplayer.transform.parent.gameObject.SetActive(false);
         scrCanvasManager.manager.customerButtonPanel.SetActive(false);
         MoveCameraToWork();
@@ -120,6 +124,7 @@ public class scrGameManager : MonoBehaviour
 
         scrCanvasManager.manager.customerTextDisplayer.transform.parent.gameObject.SetActive(false);
         scrCanvasManager.manager.customerButtonPanel.SetActive(false);
+        scrCanvasManager.manager.finishButton.SetActive(false);
 
         currentCustomer = customers[Random.Range(0, customers.Length)];
         currentCustomer.gameObject.SetActive(true);
@@ -136,6 +141,7 @@ public class scrGameManager : MonoBehaviour
             scrCanvasManager.manager.customerTextDisplayer.transform.parent.gameObject.SetActive(true);
             scrCanvasManager.manager.customerButtonPanel.SetActive(true);
             currentGameState = GameStateEnum.WaitingForGlass;
+            
         });
 
 
@@ -163,6 +169,31 @@ public class scrGameManager : MonoBehaviour
         Camera.main.transform.DORotate(cameraWorkPosition.rotation.eulerAngles, scrGameData.values.cameraToWorkDuration);
         Camera.main.DOFieldOfView(scrGameData.values.cameraWorkFov, scrGameData.values.cameraToWorkDuration);
        
+    }
+
+    public void MoneyToMachine()
+    {
+        
+        currentCoin.transform.DOMove(machine.transform.GetChild(0).position, scrGameData.values.moneyToMachineMoveDuration).OnComplete(()=> 
+        {
+            currentCoin.transform.DOMove(machine.transform.position, 0.5f).OnComplete(() =>
+            {
+                currentCoin.transform.position = new Vector3(1000, 1000, 1000);
+                scrCanvasManager.manager.DisplayWorkshopText("Wait for Machine");
+                machine.transform.DOShakeRotation(scrGameData.values.machineShakeDuration, scrGameData.values.machineStrength, scrGameData.values.machineVibrato, scrGameData.values.machineRandomness).SetEase(Ease.Linear).SetLoops(scrGameData.values.machineLoopCount, LoopType.Yoyo).OnComplete(() => 
+                {
+                    scrCanvasManager.manager.DisplayWorkshopText("");
+                    currentCoin.transform.position = machine.transform.GetChild(1).position;
+
+                    currentCoin.transform.DOMove(moneySpawnPosition.position + (Vector3.up), 1);
+                    currentGameState = GameStateEnum.WaitingForConfirm;
+                    scrCanvasManager.manager.finishButton.SetActive(true);
+
+                    currentCoin.Bigger();
+
+                });
+            });
+        });
     }
 
     private void ClickControlOnObjects()
@@ -194,6 +225,7 @@ public class scrGameManager : MonoBehaviour
                 StopGlassAnimation();
                 brush.transform.DOScale(brushStartingScale * scrGameData.values.brushScaleMultiplier, scrGameData.values.brushScaleDuration).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
                 currentGameState = GameStateEnum.WaitingForBrush;
+                scrCanvasManager.manager.DisplayWorkshopText("Click on Brush");
                 break;
             case GameStateEnum.WaitingForBrush:
                 break;
@@ -218,7 +250,7 @@ public class scrGameManager : MonoBehaviour
                 currentCoin.ReadyForBrush();
                 brush.gameObject.GetComponent<Collider>().enabled = false;
                 StopBrushAnimation();
-
+                scrCanvasManager.manager.DisplayWorkshopText("Brush the coin");
                 currentGameState = GameStateEnum.WaitingForBrushFinish;
                 break;
             case GameStateEnum.WaitingForBrushFinish:
@@ -243,6 +275,7 @@ public class scrGameManager : MonoBehaviour
             case GameStateEnum.WaitingForBrushFinish:
                 break;
             case GameStateEnum.WaitingForMachine:
+                scrCanvasManager.manager.DisplayWorkshopText("");
                 currentGameState = GameStateEnum.WaitingForMachine;
                 StopMachineAnimation();
                 currentCoin.Smaller();
@@ -259,12 +292,23 @@ public class scrGameManager : MonoBehaviour
         print("Money Cleared");
         machine.transform.DOScale(machineStartingScale * scrGameData.values.machineScaleMultiplier, scrGameData.values.machineScaleDuration).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
         currentGameState = GameStateEnum.WaitingForMachine;
+        scrCanvasManager.manager.DisplayWorkshopText("Click on Machine");
         ReturnBrush();
     }
 
     private string GetColouredString(string _val, Color _color)
     {
         return string.Format("<color=#{0:X2}{1:X2}{2:X2}>{3}</color>", (byte)(_color.r * 255f), (byte)(_color.g * 255f), (byte)(_color.b * 255f), _val);
+    }
+
+    public void ConfirmButton()
+    {
+        brush.gameObject.GetComponent<Collider>().enabled = true;
+        Destroy(currentCoin.gameObject);
+        MoveCameraToCustomer();
+        CreateCustomer();
+        currentMoney += customerMoneyDemand;
+        scrCanvasManager.manager.DisplayMoney(currentMoney);
     }
 
 
@@ -402,6 +446,7 @@ public enum GameStateEnum
     WaitingForBrush,
     WaitingForBrushFinish,
     WaitingForMachine,
-    WaitingForMachineFinish
+    WaitingForMachineFinish,
+    WaitingForConfirm
 
 }

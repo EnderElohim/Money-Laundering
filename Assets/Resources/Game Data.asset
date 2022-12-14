@@ -25,6 +25,7 @@ MonoBehaviour:
   - {fileID: 5072836886136805404, guid: 3d16a4a6d1403bf41830449390c91a1a, type: 3}
   - {fileID: 5072836886136805404, guid: 3d16a4a6d1403bf41830449390c91a1a, type: 3}
   zDistance: 2
+  moneyToMachineMoveDuration: 1
   mgScaleMultiplier: 1.5
   mgScaleDuration: 0.5
   brushScaleMultiplier: 1.5
@@ -35,3 +36,8 @@ MonoBehaviour:
   brushAnimationSpeed: 5
   machineScaleMultiplier: 1.5
   machineScaleDuration: 0.5
+  machineShakeDuration: 0.1
+  machineStrength: 5
+  machineVibrato: 2
+  machineRandomness: 2
+  machineLoopCount: 10

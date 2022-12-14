@@ -17,16 +17,28 @@ public class soGameData : ScriptableObject
     [Header("Others")]
     public List<scrMoney> moneyList;
     public float zDistance;
+    public float moneyToMachineMoveDuration;
 
     [Header("M. Glass")]
     public float mgScaleMultiplier;
     public float mgScaleDuration;
-    [Space()]
+
+    [Header("Brush")]
     public float brushScaleMultiplier;
     public float brushScaleDuration;
     public Quaternion[] brushAnimationRots;
     public float brushAnimationSpeed;
-    [Space()]
+
+    [Header("Machine")]
     public float machineScaleMultiplier;
     public float machineScaleDuration;
+
+
+    [Header("Machine Shake")]
+    public float machineShakeDuration;
+    public float machineStrength;
+    public int machineVibrato;
+    public float machineRandomness;
+    public int machineLoopCount;
+    //float duration, float strength = 90, int vibrato = 10, float randomness = 90
 }

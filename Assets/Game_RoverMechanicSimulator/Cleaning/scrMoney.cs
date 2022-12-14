@@ -55,6 +55,19 @@ public class scrMoney : MonoBehaviour {
             isDustCleared = true;
             scrGameManager.manager.MoneyDustCleaned();
 
+            dirtMaskTexture = new Texture2D(dirtMaskTextureBase.width, dirtMaskTextureBase.height);
+            dirtMaskTexture.SetPixels(dirtMaskTextureBase.GetPixels());
+            dirtMaskTexture.Apply();
+
+            for (int x = 0; x < dirtMaskTexture.width; x++)
+            {
+                for (int y = 0; y < dirtMaskTexture.height; y++)
+                {
+                    dirtMaskTexture.SetPixel(x, y, Color.black);
+                }
+            }
+            dirtMaskTexture.Apply();
+            material.SetTexture("_DirtMask", dirtMaskTexture);
             return;
         }
 
@@ -157,7 +170,11 @@ public class scrMoney : MonoBehaviour {
     [ContextMenu("Smaller")]
     public void Smaller()
     {
-        transform.DOScale(startingScale, scaleDuration);
+        transform.DOScale(startingScale, scaleDuration).OnComplete(()=> 
+        {
+            scrGameManager.manager.MoneyToMachine();
+        });
+        
     }
 
     public void ReadyForBrush()
