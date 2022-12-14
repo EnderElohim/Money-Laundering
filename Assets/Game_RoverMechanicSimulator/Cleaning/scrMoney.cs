@@ -3,8 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using CodeMonkey.Utils;
+using DG.Tweening;
 
-public class SolarPanel : MonoBehaviour {
+public class scrMoney : MonoBehaviour {
+
+    public Vector3 workScale;
+    public float scaleDuration;
+    public LayerMask moneyMask;
 
     [SerializeField] private Texture2D dirtMaskTextureBase;
     [SerializeField] private Texture2D dirtBrush;
@@ -17,6 +22,9 @@ public class SolarPanel : MonoBehaviour {
     private float dirtAmountTotal;
     private float dirtAmount;
     private Vector2Int lastPaintPixelPosition;
+    private Vector3 startingScale;
+    private bool isDustCleared;
+    private bool isReadyForClear;
 
     private void Awake() {
         dirtMaskTexture = new Texture2D(dirtMaskTextureBase.width, dirtMaskTextureBase.height);
@@ -34,15 +42,28 @@ public class SolarPanel : MonoBehaviour {
         }
         dirtAmount = dirtAmountTotal;
 
-        FunctionPeriodic.Create(() => {
-            uiText.text = Mathf.RoundToInt(GetDirtAmount() * 100f) + "%";
-        }, .03f);
+        startingScale = transform.localScale;
     }
 
-    private void Update() {
+    private void Update() 
+    {
+        if (isDustCleared == true) return;
+        if (isReadyForClear == false) return;
+
+        if(Mathf.RoundToInt(100 - GetDirtAmount() * 100f) >= 100)
+        {
+            isDustCleared = true;
+            scrGameManager.manager.MoneyDustCleaned();
+
+            return;
+        }
+
         if (Input.GetMouseButton(0)) {
 
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit raycastHit)) {
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit raycastHit, Mathf.Infinity, moneyMask)) 
+            {
+                print(raycastHit.collider.name);
+                scrGameManager.manager.MoveBrush(Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, scrGameData.values.zDistance)));
                 Vector2 textureCoord = raycastHit.textureCoord;
 
                 int pixelX = (int)(textureCoord.x * dirtMaskTexture.width);
@@ -88,17 +109,23 @@ public class SolarPanel : MonoBehaviour {
 
                         float removedAmount = pixelDirtMask.g - (pixelDirtMask.g * pixelDirt.g);
                         dirtAmount -= removedAmount;
-
+                        
                         dirtMaskTexture.SetPixel(
                             pixelXOffset + x, 
                             pixelYOffset + y, 
                             new Color(0, pixelDirtMask.g * pixelDirt.g, 0)
                         );
+
+                       
                     }
                 }
                 //*/
 
                 dirtMaskTexture.Apply();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                scrGameManager.manager.ReturnBrush();
             }
         }
 
@@ -112,7 +139,35 @@ public class SolarPanel : MonoBehaviour {
         }
     }
 
-    private float GetDirtAmount() {
+    public void DisplayRatio()
+    {
+        uiText = scrGameManager.manager.uiText;
+
+        FunctionPeriodic.Create(() => {
+            uiText.text = Mathf.RoundToInt(100 - GetDirtAmount() * 100f) + "%";
+        }, .03f);
+    }
+
+    [ContextMenu("Bigger")]
+    public void Bigger()
+    {
+        transform.DOScale(workScale, scaleDuration);
+    }
+
+    [ContextMenu("Smaller")]
+    public void Smaller()
+    {
+        transform.DOScale(startingScale, scaleDuration);
+    }
+
+    public void ReadyForBrush()
+    {
+        isReadyForClear = true;
+    }
+
+
+    private float GetDirtAmount() 
+    {
         return this.dirtAmount / dirtAmountTotal;
     }
 

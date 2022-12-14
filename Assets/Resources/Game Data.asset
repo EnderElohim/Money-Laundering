@@ -16,3 +16,22 @@ MonoBehaviour:
   cameraToWorkDuration: 1
   cameraWorkFov: 40
   cameraCustomerFov: 48
+  customerMoveDuration: 2
+  customerRequestLines:
+  - Can you clean my coin for  {0}$
+  - Hello there, would you like to clean this money for {0}$
+  customerMoneyDemandRange: {x: 50, y: 200}
+  moneyList:
+  - {fileID: 5072836886136805404, guid: 3d16a4a6d1403bf41830449390c91a1a, type: 3}
+  - {fileID: 5072836886136805404, guid: 3d16a4a6d1403bf41830449390c91a1a, type: 3}
+  zDistance: 2
+  mgScaleMultiplier: 1.5
+  mgScaleDuration: 0.5
+  brushScaleMultiplier: 1.5
+  brushScaleDuration: 0.5
+  brushAnimationRots:
+  - {x: 0.99387354, y: 0, z: 0, w: 0.11052354}
+  - {x: 1, y: -0.00000004371139, z: -0.00000004371139, w: 1.9106855e-15}
+  brushAnimationSpeed: 5
+  machineScaleMultiplier: 1.5
+  machineScaleDuration: 0.5

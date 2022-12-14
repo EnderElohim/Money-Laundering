@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 5072836886136805405}
   - component: {fileID: 5072836886136805404}
   - component: {fileID: 5072836886136805409}
-  m_Layer: 0
-  m_Name: Cylinder
+  m_Layer: 3
+  m_Name: Money
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -112,6 +112,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f077b7ad19b80eb4dbe93bf47c9b5b57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  workScale: {x: 0.7502095, y: 0.050626244, z: 0.7502095}
+  scaleDuration: 1
+  moneyMask:
+    serializedVersion: 2
+    m_Bits: 8
   dirtMaskTextureBase: {fileID: 2800000, guid: 71f5473566ee8df4481139f992b7ca60, type: 3}
   dirtBrush: {fileID: 2800000, guid: 02f18037816afda489aea8746a42a4ff, type: 3}
   material: {fileID: 2100000, guid: 78648fbecbd2e724bacfeef8df8f8f84, type: 2}
