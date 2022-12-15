@@ -34,6 +34,13 @@ public class scrGameManager : MonoBehaviour
     public scrClickOnObjectInteraction brush;
     public scrClickOnObjectInteraction machine;
 
+    [Header("Speakers")]
+    public AudioSource brushSpeaker;
+    public AudioSource machineSpeaker;
+    public AudioSource glassSpeaker;
+    public AudioSource doorSpeaker;
+    public AudioSource moneyGainSpeaker;
+
 
     //Private
     private Transform cameraCustomerPosition;
@@ -79,13 +86,26 @@ public class scrGameManager : MonoBehaviour
 
     public void MoveBrush(Vector3 _pos)
     {
+        if(brushSpeaker.isPlaying == false)
+        {
+            brushSpeaker.Play();
+        }
+
         brush.transform.rotation = Quaternion.Lerp(scrGameData.values.brushAnimationRots[0], scrGameData.values.brushAnimationRots[1], Mathf.PingPong(Time.time * scrGameData.values.brushAnimationSpeed, 1) );
         brush.transform.position = _pos;
+        
+    }
+
+    public void StopBrushSound()
+    {
+        print("StopBrushSound");
+        brushSpeaker.Stop();
     }
 
     public void ReturnBrush()
     {
         print("ReturnBrush");
+        brushSpeaker.Stop();
         brush.transform.rotation = brushStartingRotation;
         brush.transform.position = brushStartingPosition;
     }
@@ -140,6 +160,7 @@ public class scrGameManager : MonoBehaviour
         currentCustomer.transform.DOMove(customerEnterPosition.position, scrGameData.values.customerMoveDuration).SetEase(Ease.Linear).OnComplete(() =>
         {
             door.transform.DORotate(new Vector3(0, 270, 0), 0.5f);
+            doorSpeaker.Play();
             currentCustomer.transform.DOLookAt(customerEndPosition.position, 0.1f).SetEase(Ease.Linear).OnComplete(()=> 
             {
                 currentCustomer.transform.DOMove(customerEndPosition.position, scrGameData.values.customerMoveDuration).SetEase(Ease.Linear).OnComplete(() =>
@@ -190,6 +211,7 @@ public class scrGameManager : MonoBehaviour
         {
             currentCoin.transform.DOMove(machine.transform.position, 0.5f).OnComplete(() =>
             {
+                machineSpeaker.Play();
                 currentCoin.transform.position = new Vector3(1000, 1000, 1000);
                 scrCanvasManager.manager.DisplayWorkshopText("Wait for Machine");
                 machine.transform.DOShakeRotation(scrGameData.values.machineShakeDuration, scrGameData.values.machineStrength, scrGameData.values.machineVibrato, scrGameData.values.machineRandomness).SetEase(Ease.Linear).SetLoops(scrGameData.values.machineLoopCount, LoopType.Yoyo).OnComplete(() => 
@@ -200,9 +222,10 @@ public class scrGameManager : MonoBehaviour
                     currentCoin.transform.DOMove(moneySpawnPosition.position + (Vector3.up), 1);
                     currentGameState = GameStateEnum.WaitingForConfirm;
                     scrCanvasManager.manager.finishButton.SetActive(true);
-
+                    machineSpeaker.Stop();
                     currentCoin.Bigger();
-
+                    currentCoin.transform.GetChild(0).gameObject.SetActive(true);
+                    currentCoin.transform.GetChild(1).gameObject.SetActive(false);
                 });
             });
         });
@@ -228,6 +251,7 @@ public class scrGameManager : MonoBehaviour
     public void GlassInteraction()
     {
         print("GlassInteraction: " + currentGameState);
+        
         switch (currentGameState)
         {
             case GameStateEnum.WaitingForCustomer:
@@ -240,6 +264,7 @@ public class scrGameManager : MonoBehaviour
                 brush.transform.DOScale(brushStartingScale * scrGameData.values.brushScaleMultiplier, scrGameData.values.brushScaleDuration).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
                 currentGameState = GameStateEnum.WaitingForBrush;
                 scrCanvasManager.manager.DisplayWorkshopText("Click on Brush");
+                glassSpeaker.Play();
                 break;
             case GameStateEnum.WaitingForBrush:
                 break;
@@ -320,6 +345,7 @@ public class scrGameManager : MonoBehaviour
 
     public void ConfirmButton()
     {
+        moneyGainSpeaker.Play();
         scrCanvasManager.manager.finishButton.SetActive(false);
         brush.gameObject.GetComponent<Collider>().enabled = true;
         Destroy(currentCoin.gameObject);
@@ -327,6 +353,7 @@ public class scrGameManager : MonoBehaviour
         
         currentMoney += customerMoneyDemand;
         scrCanvasManager.manager.CreateMoney(currentMoney);
+        doorSpeaker.Play();
         door.transform.DORotate(new Vector3(0, 270, 0), 1);
         scrCustomer _oldCustomer = currentCustomer;
         currentCustomer.anim.SetBool("Is Moving", true);

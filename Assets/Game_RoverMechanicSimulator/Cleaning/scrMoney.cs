@@ -55,19 +55,8 @@ public class scrMoney : MonoBehaviour {
             isDustCleared = true;
             scrGameManager.manager.MoneyDustCleaned();
             uiText.text = "";
-            dirtMaskTexture = new Texture2D(dirtMaskTextureBase.width, dirtMaskTextureBase.height);
-            dirtMaskTexture.SetPixels(dirtMaskTextureBase.GetPixels());
-            dirtMaskTexture.Apply();
 
-            for (int x = 0; x < dirtMaskTexture.width; x++)
-            {
-                for (int y = 0; y < dirtMaskTexture.height; y++)
-                {
-                    dirtMaskTexture.SetPixel(x, y, Color.black);
-                }
-            }
-            dirtMaskTexture.Apply();
-            material.SetTexture("_DirtMask", dirtMaskTexture);
+            CleanMoney();
             return;
         }
 
@@ -137,10 +126,15 @@ public class scrMoney : MonoBehaviour {
                 dirtMaskTexture.Apply();
                 uiText.text = Mathf.RoundToInt(100 - GetDirtAmount() * 100f) + "%";
             }
-            if (Input.GetMouseButtonUp(0))
+            else
             {
-                scrGameManager.manager.ReturnBrush();
+                scrGameManager.manager.StopBrushSound();
             }
+            
+        }
+        else
+        {
+            scrGameManager.manager.StopBrushSound();
         }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
@@ -151,6 +145,23 @@ public class scrMoney : MonoBehaviour {
                 solarAnimation.Play("SolarPanelFlipBack");
             }
         }
+    }
+
+    public void CleanMoney()
+    {
+        dirtMaskTexture = new Texture2D(dirtMaskTextureBase.width, dirtMaskTextureBase.height);
+        dirtMaskTexture.SetPixels(dirtMaskTextureBase.GetPixels());
+        dirtMaskTexture.Apply();
+
+        for (int x = 0; x < dirtMaskTexture.width; x++)
+        {
+            for (int y = 0; y < dirtMaskTexture.height; y++)
+            {
+                dirtMaskTexture.SetPixel(x, y, Color.black);
+            }
+        }
+        dirtMaskTexture.Apply();
+        material.SetTexture("_DirtMask", dirtMaskTexture);
     }
 
     public void DisplayRatio()
