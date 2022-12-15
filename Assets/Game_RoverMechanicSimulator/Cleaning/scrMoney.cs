@@ -54,7 +54,7 @@ public class scrMoney : MonoBehaviour {
         {
             isDustCleared = true;
             scrGameManager.manager.MoneyDustCleaned();
-
+            uiText.text = "";
             dirtMaskTexture = new Texture2D(dirtMaskTextureBase.width, dirtMaskTextureBase.height);
             dirtMaskTexture.SetPixels(dirtMaskTextureBase.GetPixels());
             dirtMaskTexture.Apply();
@@ -135,6 +135,7 @@ public class scrMoney : MonoBehaviour {
                 //*/
 
                 dirtMaskTexture.Apply();
+                uiText.text = Mathf.RoundToInt(100 - GetDirtAmount() * 100f) + "%";
             }
             if (Input.GetMouseButtonUp(0))
             {
@@ -156,9 +157,9 @@ public class scrMoney : MonoBehaviour {
     {
         uiText = scrGameManager.manager.uiText;
 
-        FunctionPeriodic.Create(() => {
-            uiText.text = Mathf.RoundToInt(100 - GetDirtAmount() * 100f) + "%";
-        }, .03f);
+        //FunctionPeriodic.Create(() => {
+        //    uiText.text = Mathf.RoundToInt(100 - GetDirtAmount() * 100f) + "%";
+        //}, .03f);
     }
 
     [ContextMenu("Bigger")]
@@ -179,6 +180,7 @@ public class scrMoney : MonoBehaviour {
 
     public void ReadyForBrush()
     {
+        DisplayRatio();
         isReadyForClear = true;
     }
 

@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class scrDebugger : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public void ChanceMachineStrength(float _val)
     {
-        
+        scrGameData.values.machineStrength = _val;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ChanceMachineDuration(float _val)
     {
-        
+        scrGameData.values.machineShakeDuration = _val;
     }
+
+    public void ChanceBrushAnimationSpeed(float _val)
+    {
+        scrGameData.values.brushAnimationSpeed = _val;
+    }
+
+    public void ChanceTextSpeed(float _val)
+    {
+        scrGameData.values.customerTextDuration = _val;
+    }
+
+
 }

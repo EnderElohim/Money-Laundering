@@ -17,11 +17,14 @@ public class scrGameManager : MonoBehaviour
     #endregion
 
     [Header("Assignment")]
-    public EventStruct[] EventList;
+    public Transform door;
     public Transform cameraWorkPosition;
     public Transform moneySpawnPosition;
     public Transform customerEnterPosition;
     public Transform customerEndPosition;
+    public Transform[] customerLeftPositions;
+    public Transform customerCreationPosition;
+    public Transform glassActivePosition;
     public scrCustomer[] customers;
     public TextMeshProUGUI uiText;
     
@@ -33,18 +36,21 @@ public class scrGameManager : MonoBehaviour
 
 
     //Private
-    private TriggerCondition currentCondition = TriggerCondition.onEnd;
     private Transform cameraCustomerPosition;
     private scrCustomer currentCustomer;
     private int currentMoney;
     private int customerMoneyDemand;
     private Vector3 magnifyingGlassStartingScale;
+    private Vector3 magnifyingGlassStartingPosition;
+    private Quaternion magnifyingGlassStartingRotation;
     private GameStateEnum currentGameState = GameStateEnum.WaitingForCustomer;
     private scrMoney currentCoin;
     private Vector3 brushStartingPosition;
     private Vector3 brushStartingScale;
     private Quaternion brushStartingRotation;
     private Vector3 machineStartingScale;
+    private int currentCustomerId;
+     
     
     private void Start()
     {
@@ -52,6 +58,8 @@ public class scrGameManager : MonoBehaviour
         cameraCustomerPosition.position = Camera.main.transform.position;
         cameraCustomerPosition.rotation = Camera.main.transform.rotation;
         magnifyingGlassStartingScale = magnifyingGlass.transform.localScale;
+        magnifyingGlassStartingPosition = magnifyingGlass.transform.position;
+        magnifyingGlassStartingRotation = magnifyingGlass.transform.rotation;
         machineStartingScale = machine.transform.localScale;
         brushStartingScale = brush.transform.localScale;
         brushStartingPosition = brush.transform.position;
@@ -114,36 +122,41 @@ public class scrGameManager : MonoBehaviour
 
     [ContextMenu("CreateCustomer")]
     public void CreateCustomer()
-    {
-        if(currentCustomer != null)
-        {
-            currentCustomer.gameObject.SetActive(false);
-        }
-
+    {        
         currentGameState = GameStateEnum.WaitingForCustomer;
 
         scrCanvasManager.manager.customerTextDisplayer.transform.parent.gameObject.SetActive(false);
         scrCanvasManager.manager.customerButtonPanel.SetActive(false);
-        scrCanvasManager.manager.finishButton.SetActive(false);
+       
 
-        currentCustomer = customers[Random.Range(0, customers.Length)];
+        currentCustomer = customers[currentCustomerId];
+        currentCustomerId++;
+
+        if (currentCustomerId >= customers.Length) { currentCustomerId = 0; }
         currentCustomer.gameObject.SetActive(true);
-        currentCustomer.transform.position = customerEnterPosition.position;
-
+        currentCustomer.transform.position = customerCreationPosition.position;
+        currentCustomer.transform.LookAt(customerEnterPosition);
         currentCustomer.anim.SetBool("Is Moving", true);
-        currentCustomer.transform.DOMove(customerEndPosition.position, scrGameData.values.customerMoveDuration).SetEase(Ease.Linear).OnComplete(() => 
+        currentCustomer.transform.DOMove(customerEnterPosition.position, scrGameData.values.customerMoveDuration).SetEase(Ease.Linear).OnComplete(() =>
         {
-            currentCustomer.anim.SetBool("Is Moving", false);
-            customerMoneyDemand = Random.Range((int)scrGameData.values.customerMoneyDemandRange.x, (int)scrGameData.values.customerMoneyDemandRange.y);
-            string _randomText = scrGameData.values.customerRequestLines[Random.Range(0, scrGameData.values.customerRequestLines.Length)];
-            string _moneyDemandString = string.Format(_randomText, "<color=green>" + customerMoneyDemand + "</color>");
-            scrCanvasManager.manager.customerTextDisplayer.text = _moneyDemandString;
-            scrCanvasManager.manager.customerTextDisplayer.transform.parent.gameObject.SetActive(true);
-            scrCanvasManager.manager.customerButtonPanel.SetActive(true);
-            currentGameState = GameStateEnum.WaitingForGlass;
-            
-        });
+            door.transform.DORotate(new Vector3(0, 270, 0), 0.5f);
+            currentCustomer.transform.DOLookAt(customerEndPosition.position, 0.1f).SetEase(Ease.Linear).OnComplete(()=> 
+            {
+                currentCustomer.transform.DOMove(customerEndPosition.position, scrGameData.values.customerMoveDuration).SetEase(Ease.Linear).OnComplete(() =>
+                {
+                    door.transform.DORotate(new Vector3(0, 0, 0), 0.5f);
+                    currentCustomer.anim.SetBool("Is Moving", false);
+                    customerMoneyDemand = Random.Range((int)scrGameData.values.customerMoneyDemandRange.x, (int)scrGameData.values.customerMoneyDemandRange.y);
+                    string _randomText = scrGameData.values.customerRequestLines[Random.Range(0, scrGameData.values.customerRequestLines.Length)];
+                    string _moneyDemandString = string.Format(_randomText, "<color=green>" + customerMoneyDemand + "</color>");
+                    ChangeString(scrCanvasManager.manager.customerTextDisplayer, _moneyDemandString, scrGameData.values.customerTextDuration);
+                    //scrCanvasManager.manager.customerTextDisplayer.text = _moneyDemandString;
+                    scrCanvasManager.manager.customerTextDisplayer.transform.parent.gameObject.SetActive(true);
+                   
 
+                });
+            });
+        });
 
     }
 
@@ -173,7 +186,6 @@ public class scrGameManager : MonoBehaviour
 
     public void MoneyToMachine()
     {
-        
         currentCoin.transform.DOMove(machine.transform.GetChild(0).position, scrGameData.values.moneyToMachineMoveDuration).OnComplete(()=> 
         {
             currentCoin.transform.DOMove(machine.transform.position, 0.5f).OnComplete(() =>
@@ -184,7 +196,7 @@ public class scrGameManager : MonoBehaviour
                 {
                     scrCanvasManager.manager.DisplayWorkshopText("");
                     currentCoin.transform.position = machine.transform.GetChild(1).position;
-
+                    currentCoin.transform.rotation = Quaternion.Euler(new Vector3(90, 0, 0));
                     currentCoin.transform.DOMove(moneySpawnPosition.position + (Vector3.up), 1);
                     currentGameState = GameStateEnum.WaitingForConfirm;
                     scrCanvasManager.manager.finishButton.SetActive(true);
@@ -223,6 +235,8 @@ public class scrGameManager : MonoBehaviour
             case GameStateEnum.WaitingForGlass:
                 currentCoin.Bigger();
                 StopGlassAnimation();
+                magnifyingGlass.transform.DOMove(glassActivePosition.position, 0.1f);
+                magnifyingGlass.transform.DORotate(glassActivePosition.rotation.eulerAngles, 0.1f);
                 brush.transform.DOScale(brushStartingScale * scrGameData.values.brushScaleMultiplier, scrGameData.values.brushScaleDuration).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
                 currentGameState = GameStateEnum.WaitingForBrush;
                 scrCanvasManager.manager.DisplayWorkshopText("Click on Brush");
@@ -252,6 +266,7 @@ public class scrGameManager : MonoBehaviour
                 StopBrushAnimation();
                 scrCanvasManager.manager.DisplayWorkshopText("Brush the coin");
                 currentGameState = GameStateEnum.WaitingForBrushFinish;
+               
                 break;
             case GameStateEnum.WaitingForBrushFinish:
                 break;
@@ -279,6 +294,8 @@ public class scrGameManager : MonoBehaviour
                 currentGameState = GameStateEnum.WaitingForMachine;
                 StopMachineAnimation();
                 currentCoin.Smaller();
+                magnifyingGlass.transform.DOMove(magnifyingGlassStartingPosition, 0.1f);
+                magnifyingGlass.transform.DORotate(magnifyingGlassStartingRotation.eulerAngles, 0.1f);
                 break;
             case GameStateEnum.WaitingForMachineFinish:
                 break;
@@ -303,83 +320,40 @@ public class scrGameManager : MonoBehaviour
 
     public void ConfirmButton()
     {
+        scrCanvasManager.manager.finishButton.SetActive(false);
         brush.gameObject.GetComponent<Collider>().enabled = true;
         Destroy(currentCoin.gameObject);
         MoveCameraToCustomer();
-        CreateCustomer();
+        
         currentMoney += customerMoneyDemand;
-        scrCanvasManager.manager.DisplayMoney(currentMoney);
+        scrCanvasManager.manager.CreateMoney(currentMoney);
+        door.transform.DORotate(new Vector3(0, 270, 0), 1);
+        scrCustomer _oldCustomer = currentCustomer;
+        currentCustomer.anim.SetBool("Is Moving", true);
+        Transform _existPosition = customerLeftPositions[(Random.Range(0, 4) == 0 ? 0 : 1)];
+        _oldCustomer.transform.DOLookAt(customerEnterPosition.position, 0.1f).SetEase(Ease.Linear).OnComplete(()=> 
+        {
+            _oldCustomer.transform.DOMove(customerEnterPosition.position, scrGameData.values.customerMoveDuration).SetEase(Ease.Linear).OnComplete(() =>
+            {
+                _oldCustomer.transform.DOLookAt(_existPosition.position, 0.1f).SetEase(Ease.Linear).OnComplete(()=>
+                {
+                    CreateCustomer();
+                    door.transform.DORotate(new Vector3(0, 0, 0), 0.5f);
+                    _oldCustomer.transform.DOMove(_existPosition.position, 2).SetEase(Ease.Linear).OnComplete(() => 
+                    {
+                        _oldCustomer.gameObject.SetActive(false);
+                     
+                    });
+                });
+            });
+        });
+       
     }
 
-
-    public void Win()
-    {
-        currentCondition = TriggerCondition.onWin;
-        TriggerEvents();
-
-    }
-
-    public void Lose()
-    {
-        currentCondition = TriggerCondition.onLose;
-        TriggerEvents();
-    }
 
     public void Restart()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    private void TriggerEvents()
-    {
-        foreach (EventStruct item in EventList)
-        {
-            if (item.triggerCondition == TriggerCondition.onEnd || item.triggerCondition == currentCondition)
-            {
-                switch (item.triggerEvent)
-                {
-                    case TriggerEvent.Enable:
-                        foreach (GameObject currentItem in item.subjects)
-                        {
-                            currentItem.SetActive(true);
-                        }
-                        break;
-                    case TriggerEvent.Disable:
-                        foreach (GameObject currentItem in item.subjects)
-                        {
-                            currentItem.SetActive(false);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
-    }
-
-    private void EnableDisableObject(GameObject _subject, bool _val)
-    {
-        _subject.SetActive(_val);
-    }
-
-    private void AnimationTrigger(Animator _anim, string _valName)
-    {
-        _anim.SetTrigger(_valName);
-    }
-
-    private void AnimationSetInt(Animator _anim, string _valName, int _val)
-    {
-        _anim.SetInteger(_valName, _val);
-    }
-
-    private void AnimationSetFloat(Animator _anim, string _valName, float _val)
-    {
-        _anim.SetFloat(_valName, _val);
-    }
-
-    private void AnimationSetBool(Animator _anim, string _valName, bool _val)
-    {
-        _anim.SetBool(_valName, _val);
     }
 
     private void ChangeString(TextMeshProUGUI _text, string _val, float _actionSpeed)
@@ -396,12 +370,40 @@ public class scrGameManager : MonoBehaviour
     private IEnumerator ChangeStringEnumarator(TextMeshProUGUI _text, string _val, float _actionSpeed)
     {
         float calculatedTime = _actionSpeed / (float)_val.Length;
+        bool startedSkipping = false;
+        bool isColourFinded = false;
         for (int i = 0; i <= _val.Length; i++)
         {
+            if(isColourFinded == false)
+            {
+                if (_val.Substring(i, 1) == "<")
+                {
+                    isColourFinded = true;
+                    startedSkipping = true;
+                    continue;
+                }
+            }
+
+            if (startedSkipping == true)
+            {
+                if (_val.Substring(i, 1) == "$")
+                {
+                    startedSkipping = false;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+
             _text.text = _val.Substring(0, i);
 
             yield return new WaitForSeconds(calculatedTime);
         }
+
+        scrCanvasManager.manager.customerButtonPanel.SetActive(true);
+        currentGameState = GameStateEnum.WaitingForGlass;
     }
 
 
@@ -416,28 +418,7 @@ public class scrGameManager : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public enum TriggerCondition
-{
-    onWin = 0,
-    onLose = 1,
-    onEnd = 2
-}
 
-public enum TriggerEvent
-{
-    Enable = 0,
-    Disable = 1
-}
-
-[System.Serializable]
-public struct EventStruct
-{
-    public string description;
-    public GameObject[] subjects;
-    public TriggerCondition triggerCondition;
-    public TriggerEvent triggerEvent;
-}
 
 public enum GameStateEnum
 {

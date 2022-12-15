@@ -10,14 +10,19 @@ public class soGameData : ScriptableObject
     public float cameraToWorkDuration;
     public float cameraWorkFov;
     public float cameraCustomerFov;
+
     [Header("Customer")]
     public float customerMoveDuration;
     public string[] customerRequestLines;
     public Vector2 customerMoneyDemandRange;
+    public float customerTextDuration;
+
     [Header("Others")]
     public List<scrMoney> moneyList;
     public float zDistance;
     public float moneyToMachineMoveDuration;
+    public Sprite moneySprite;
+    public float moneySpriteMoveDuration;
 
     [Header("M. Glass")]
     public float mgScaleMultiplier;
