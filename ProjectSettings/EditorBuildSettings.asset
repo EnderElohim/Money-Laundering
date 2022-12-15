@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: d1c3109bdb54ad54c8a2b2838528e640
+    path: Assets/_MS/Scene/Rover_Cleaning.unity
+    guid: 4617b4ad0c58bb04ea98df1cbc284336
   m_configObjects: {}

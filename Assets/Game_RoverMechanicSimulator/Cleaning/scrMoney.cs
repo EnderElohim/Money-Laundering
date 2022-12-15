@@ -50,7 +50,7 @@ public class scrMoney : MonoBehaviour {
         if (isDustCleared == true) return;
         if (isReadyForClear == false) return;
 
-        if(Mathf.RoundToInt(100 - GetDirtAmount() * 100f) >= 100)
+        if(Mathf.RoundToInt(100 - GetDirtAmount() * 100f) >= 99)
         {
             isDustCleared = true;
             scrGameManager.manager.MoneyDustCleaned();
