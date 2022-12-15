@@ -196,7 +196,7 @@ public class scrGameManager : MonoBehaviour
                 {
                     scrCanvasManager.manager.DisplayWorkshopText("");
                     currentCoin.transform.position = machine.transform.GetChild(1).position;
-                    currentCoin.transform.rotation = Quaternion.Euler(new Vector3(90, 0, 0));
+                    currentCoin.transform.rotation = Quaternion.Euler(new Vector3(180, 0, 0));
                     currentCoin.transform.DOMove(moneySpawnPosition.position + (Vector3.up), 1);
                     currentGameState = GameStateEnum.WaitingForConfirm;
                     scrCanvasManager.manager.finishButton.SetActive(true);
